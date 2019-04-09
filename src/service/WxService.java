@@ -202,7 +202,10 @@ System.out.println("getResponse->MsgType:"+MsgType);
 			// 文本消息
 
 			break;
-
+		case "event":
+			// 事件
+			msg=dealEvent(requestMap);
+			break;
 		default:
 			break;
 		}
@@ -214,6 +217,59 @@ System.out.println("getResponse->MsgType:"+MsgType);
 		return null;
 
 	}
+	
+	/**
+	 * 专门用来处理事件推送的
+	 * 注：自定义菜单事件只是事件之一
+	 * @param requestMap
+	 * @return
+	 */
+	private static BaseMessage dealEvent(Map<String, String> requestMap) {
+		String event = requestMap.get("Event");
+		switch (event) {
+		case "CLICK":
+			return dealClick(requestMap);
+		case "VIEW":
+			return dealView(requestMap);
+
+		default:
+			break;
+		}
+		return null;
+	}
+
+	/**
+	 * 专门处理view类型的按钮
+	 * @param requestMap
+	 * @return
+	 */
+	private static BaseMessage dealView(Map<String, String> requestMap) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * 处理click类型的按钮
+	 * 因为click可能有好几种，所以需要取出EventKey来判断这个click来自于哪个按钮的点击
+	 * @param requestMap
+	 * @return
+	 */
+	private static BaseMessage dealClick(Map<String, String> requestMap) {
+		String key = requestMap.get("EventKey");
+		switch (key) {
+		case "1":
+			//处理点击了第一个一级菜单
+			return new TextMessage(requestMap, "你点了一下第一个一级菜单");
+		case "32":
+			//处理点击了第三个一级菜单的第二个子菜单
+			
+			
+		default:
+			break;
+		}
+		return null;
+	}
+
 
 	/**
 	 * 把java消息对象处理为xml数据包
