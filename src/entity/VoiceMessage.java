@@ -14,9 +14,9 @@ public class VoiceMessage extends BaseMessage {
 		this.mediaId = mediaId;
 	}
 	public VoiceMessage(Map<String, String> requestMap,String mediaId) {
-		//这里必须调用父类
+		//杩欓噷蹇呴』璋冪敤鐖剁被
 		super(requestMap);
-		//设置语音消息的MsgType为voice
+		//璁剧疆璇煶娑堟伅鐨凪sgType涓簐oice
 		this.setMsgType("voice");
 		this.mediaId=mediaId;
 	}

@@ -9,7 +9,7 @@ public class Music {
 	private String musicUrl;
 	private String hQMusicUrl;
 	private String thumbMediaId;
-	
+
 	public String getTitle() {
 		return title;
 	}
@@ -50,6 +50,6 @@ public class Music {
 		this.hQMusicUrl = hQMusicUrl;
 		this.thumbMediaId = thumbMediaId;
 	}
-	
+
 
 }

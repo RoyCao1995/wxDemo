@@ -14,7 +14,7 @@ public class BaseMessage {
 	private String createTime;
 	@XStreamAlias("MsgType")
 	private String msgType;
-	
+
 	public String getToUserName() {
 		return toUserName;
 	}
@@ -36,20 +36,20 @@ public class BaseMessage {
 	public String getMsgType() {
 		return msgType;
 	}
-	
+
 	public void setMsgType(String msgType) {
 		this.msgType = msgType;
 	}
 	/**
-	 * Ô¤ÖÃÒ»Ð©»ù±¾ÊôÐÔ
+	 * é¢„ç½®ä¸€äº›åŸºæœ¬å±žæ€§
 	 * @param msgType
 	 */
 	public BaseMessage(Map<String, String> requestMap) {
 		this.toUserName=requestMap.get("FromUserName");
 		this.fromUserName=requestMap.get("ToUserName");
 		this.createTime=System.currentTimeMillis()/1000+"";
-		
-		
+
+
 	}
-	
+
 }

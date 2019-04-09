@@ -7,7 +7,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("xml")
 public class ImageMessage extends BaseMessage {
 	private String mediaId;
-	
+
 	public String getMediaId() {
 		return mediaId;
 	}
@@ -15,9 +15,9 @@ public class ImageMessage extends BaseMessage {
 		this.mediaId = mediaId;
 	}
 	public ImageMessage(Map<String, String> requestMap,String mediaId) {
-		//这里必须调用父类
+		//杩欓噷蹇呴』璋冪敤鐖剁被
 		super(requestMap);
-		//设置图片消息的MsgType为image
+		//璁剧疆鍥剧墖娑堟伅鐨凪sgType涓篿mage
 		this.setMsgType("image");
 		this.mediaId=mediaId;
 	}

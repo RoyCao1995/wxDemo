@@ -16,11 +16,11 @@ public class TextMessage extends BaseMessage {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	
+
 	public TextMessage(Map<String, String> requestMap,String content) {
-		//这里必须调用父类
+		//杩欓噷蹇呴』璋冪敤鐖剁被
 		super(requestMap);
-		//设置文本消息的MsgType为text
+		//璁剧疆鏂囨湰娑堟伅鐨凪sgType涓簍ext
 		this.setMsgType("text");
 		this.content=content;
 	}

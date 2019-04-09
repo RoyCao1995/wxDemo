@@ -2,7 +2,7 @@ package entity;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-//每一个article都是一个item
+//姣忎竴涓猘rticle閮芥槸涓�涓猧tem
 @XStreamAlias("item")
 public class Article {
 	@XStreamAlias("Title")
@@ -44,6 +44,6 @@ public class Article {
 		this.picUrl = picUrl;
 		this.url = url;
 	}
-	
-	
+
+
 }

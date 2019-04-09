@@ -17,40 +17,40 @@ public class WxServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		/**
-		 * signature Î¢ĞÅ¼ÓÃÜÇ©Ãû£¬signature½áºÏÁË¿ª·¢ÕßÌîĞ´µÄtoken²ÎÊıºÍÇëÇóÖĞµÄtimestamp²ÎÊı¡¢nonce²ÎÊı¡£
-		 * timestamp Ê±¼ä´Á nonce Ëæ»úÊı echostr Ëæ»ú×Ö·û´®
-		 * 
+		 * signature å¾®ä¿¡åŠ å¯†ç­¾åï¼Œsignatureç»“åˆäº†å¼€å‘è€…å¡«å†™çš„tokenå‚æ•°å’Œè¯·æ±‚ä¸­çš„timestampå‚æ•°ã€nonceå‚æ•°ã€‚
+		 * timestamp æ—¶é—´æˆ³ nonce éšæœºæ•° echostr éšæœºå­—ç¬¦ä¸²
+		 *
 		 */
 		String signature = request.getParameter("signature");
 		String timestamp = request.getParameter("timestamp");
 		String nonce = request.getParameter("nonce");
 		String echostr = request.getParameter("echostr");
-		// ÑéÖ¤Ç©Ãû
+		// éªŒè¯ç­¾å
 		if (WxService.check(signature, timestamp, nonce)) {
 			PrintWriter out = response.getWriter();
-			// Í¨¹ı¼ìÑésignature¶ÔÇëÇó½øĞĞĞ£Ñé£¬ÈôĞ£Ñé³É¹¦ÔòÔ­Ñù·µ»Øechostr£¬±íÊ¾½ÓÈë³É¹¦£¬·ñÔò½ÓÈëÊ§°Ü
+			// é€šè¿‡æ£€éªŒsignatureå¯¹è¯·æ±‚è¿›è¡Œæ ¡éªŒï¼Œè‹¥æ ¡éªŒæˆåŠŸåˆ™åŸæ ·è¿”å›echostrï¼Œè¡¨ç¤ºæ¥å…¥æˆåŠŸï¼Œå¦åˆ™æ¥å…¥å¤±è´¥
 			out.print(echostr);
 			out.close();
 			out = null;
 			System.out.println(echostr);
-			System.out.println("½ÓÈë³É¹¦");
+			System.out.println("æ¥å…¥æˆåŠŸ");
 		} else {
-			System.out.println("½ÓÈëÊ§°Ü");
+			System.out.println("æ¥å…¥å¤±è´¥");
 		}
 
 	}
 
 	/**
-	 * ½ÓÊÕÏûÏ¢ºÍÊÂ¼şÍÆËÍ
+	 * æ¥æ”¶æ¶ˆæ¯å’Œäº‹ä»¶æ¨é€
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf8");
 		response.setCharacterEncoding("utf8");
-		//´¦ÀíÏûÏ¢ºÍÊÂ¼şÍÆËÍ
+		//å¤„ç†æ¶ˆæ¯å’Œäº‹ä»¶æ¨é€
 		Map<String, String> requestMap=WxService.parseRequest(request.getInputStream());
 System.out.println("dopost-requestMap->parseReq:"+requestMap);
-//**parse·½·¨Ã»ÎÊÌâ
-		//×¼±¸»Ø¸´µÄÊı¾İ°ü
+//**parseæ–¹æ³•æ²¡é—®é¢˜
+		//å‡†å¤‡å›å¤çš„æ•°æ®åŒ…
 		String respXml=WxService.getResponse(requestMap);
 System.out.println("dopost-respXml"+respXml);
 		PrintWriter out = response.getWriter();

@@ -12,7 +12,7 @@ public class NewsMessage extends BaseMessage {
 	private String articleCount;
 	@XStreamAlias("Articles")
 	private List<Article> articles=new ArrayList<Article>();
-	
+
 	public String getArticleCount() {
 		return articleCount;
 	}
@@ -31,6 +31,6 @@ public class NewsMessage extends BaseMessage {
 		this.articleCount=articles.size()+"";
 		this.articles = articles;
 	}
-	
-	
+
+
 }

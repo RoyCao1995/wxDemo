@@ -21,8 +21,8 @@ public class MusicMessage extends BaseMessage {
 		setMsgType("music");
 		this.music = music;
 	}
-	
 
-	
+
+
 
 }

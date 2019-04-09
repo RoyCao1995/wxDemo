@@ -32,44 +32,44 @@ import net.sf.json.JSONObject;
 import util.Util;
 
 public class WxService {
-	// Óë½Ó¿ÚÅäÖÃĞÅÏ¢ÖĞµÄTokenÒªÒ»ÖÂ,×Ô¼ºÅäÖÃ
+	// ä¸æ¥å£é…ç½®ä¿¡æ¯ä¸­çš„Tokenè¦ä¸€è‡´,è‡ªå·±é…ç½®
 	private static String token = "photoshop_xatu";
 	private static String APPKEY = "1fec136dbd19f44743803f89bd55ca62";
-	
-	// access_token£ºurl
+
+	// access_tokenï¼šurl
 	private static final String GET_TOKEN_URL="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
 	private static final String APPID="wx5ee32410401e3e90";
-	private static final String APPSECRET="38cbe17852a2e3b7531692dbec29f51a";//ÕâĞ©Ó¦¸ÃĞ´ÔÚÅäÖÃÎÄ¼şÀïÃæ
-	// ÓÃÓÚ´æ´¢access_token
+	private static final String APPSECRET="38cbe17852a2e3b7531692dbec29f51a";//è¿™äº›åº”è¯¥å†™åœ¨é…ç½®æ–‡ä»¶é‡Œé¢
+	// ç”¨äºå­˜å‚¨access_token
 	private static AccessToken at;
-	
+
 	/**
-	 * »ñÈ¡Ò»¸öaccess_token£¬²»¶ÔÍâ½çÌá¹©·µ»ØÖµ
+	 * è·å–ä¸€ä¸ªaccess_tokenï¼Œä¸å¯¹å¤–ç•Œæä¾›è¿”å›å€¼
 	 */
 	private static void getToken(){
-		//Éú³ÉÎ¢ĞÅ·şÎñÆ÷»ñÈ¡access_tokenµÄÎ¢ĞÅ½Ó¿Ú
+		//ç”Ÿæˆå¾®ä¿¡æœåŠ¡å™¨è·å–access_tokençš„å¾®ä¿¡æ¥å£
 		String url=GET_TOKEN_URL.replace("APPID", APPID).replace("APPSECRET", APPSECRET);
-		String tokenStr = Util.get(url);//ÕâÀï»ñÈ¡µÄaccess_tokenÊÇÒ»¸öjson×Ö·û´®£¬°üº¬×ÅÓĞĞ§ÆÚ2Ğ¡Ê±
-		//½«json·â×°³ÉÒ»¸ö¶ÔÏó
+		String tokenStr = Util.get(url);//è¿™é‡Œè·å–çš„access_tokenæ˜¯ä¸€ä¸ªjsonå­—ç¬¦ä¸²ï¼ŒåŒ…å«ç€æœ‰æ•ˆæœŸ2å°æ—¶
+		//å°†jsonå°è£…æˆä¸€ä¸ªå¯¹è±¡
 		JSONObject jsonObject = JSONObject.fromObject(tokenStr);
 		String accessToken = jsonObject.getString("access_token");
 		String expireIn = jsonObject.getString("expires_in");
-		// ´´½¨access_token¶ÔÏó£¬²¢´æÆğÀ´
+		// åˆ›å»ºaccess_tokenå¯¹è±¡ï¼Œå¹¶å­˜èµ·æ¥
 		at=new AccessToken(accessToken, expireIn);
 	}
-	
-	
+
+
 	public static String getAccessToken() {
-		//±£Ö¤Ò»¶¨ÓĞÒ»¸ötoken
+		//ä¿è¯ä¸€å®šæœ‰ä¸€ä¸ªtoken
 		if (at==null||at.isExpire()) {
 			getToken();
 		}
 		return at.getAccessToken();
 	}
-	
+
 	/**
-	 * ÑéÖ¤Ç©Ãû
-	 * 
+	 * éªŒè¯ç­¾å
+	 *
 	 * @param signature
 	 * @param timestamp
 	 * @param nonce
@@ -77,32 +77,32 @@ public class WxService {
 	 */
 	public static boolean check(String signature, String timestamp, String nonce) {
 
-		// 1£©½«token¡¢timestamp¡¢nonceÈı¸ö²ÎÊı½øĞĞ×ÖµäĞòÅÅĞò
+		// 1ï¼‰å°†tokenã€timestampã€nonceä¸‰ä¸ªå‚æ•°è¿›è¡Œå­—å…¸åºæ’åº
 		String[] arr = new String[] { token, timestamp, nonce };
 		Arrays.sort(arr);
-		// 2£©½«Èı¸ö²ÎÊı×Ö·û´®Æ´½Ó³ÉÒ»¸ö×Ö·û´®½øĞĞsha1¼ÓÃÜI
+		// 2ï¼‰å°†ä¸‰ä¸ªå‚æ•°å­—ç¬¦ä¸²æ‹¼æ¥æˆä¸€ä¸ªå­—ç¬¦ä¸²è¿›è¡Œsha1åŠ å¯†I
 		String mixStr = arr[0] + arr[1] + arr[2];
 		String mySig = sha1(mixStr);
-		// 3£©¿ª·¢Õß»ñµÃ¼ÓÃÜºóµÄ×Ö·û´®¿ÉÓësignature¶Ô±È£¬±êÊ¶¸ÃÇëÇóÀ´Ô´ÓÚÎ¢ĞÅ
+		// 3ï¼‰å¼€å‘è€…è·å¾—åŠ å¯†åçš„å­—ç¬¦ä¸²å¯ä¸signatureå¯¹æ¯”ï¼Œæ ‡è¯†è¯¥è¯·æ±‚æ¥æºäºå¾®ä¿¡
 		return mySig.equalsIgnoreCase(signature);
 	}
 
 	/**
-	 * ½øĞĞsha1¼ÓÃÜ
-	 * 
+	 * è¿›è¡Œsha1åŠ å¯†
+	 *
 	 * @param mixStr
 	 * @return
 	 */
 	private static String sha1(String mixStr) {
 
 		try {
-			// »ñÈ¡Ò»¸ö¼ÓÃÜ¶ÔÏó
+			// è·å–ä¸€ä¸ªåŠ å¯†å¯¹è±¡
 			MessageDigest md = MessageDigest.getInstance("sha1");
-			// ¼ÓÃÜ
+			// åŠ å¯†
 			byte[] digest = md.digest(mixStr.getBytes());
 			char[] chars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 			StringBuilder sb = new StringBuilder();
-			// ´¦Àí¼ÓÃÜ½á¹û
+			// å¤„ç†åŠ å¯†ç»“æœ
 			for (byte b : digest) {
 				sb.append(chars[(b >> 4) & 15]);
 				sb.append(chars[b & 15]);
@@ -117,8 +117,8 @@ public class WxService {
 	}
 
 	/**
-	 * ½«×Ö½Ú×ª»»ÎªÊ®Áù½øÖÆ×Ö·û´®
-	 * 
+	 * å°†å­—èŠ‚è½¬æ¢ä¸ºåå…­è¿›åˆ¶å­—ç¬¦ä¸²
+	 *
 	 * @param mByte
 	 * @return
 	 */
@@ -133,8 +133,8 @@ public class WxService {
 	}
 
 	/**
-	 * ½âÎöXMLÊı¾İ°ü
-	 * 
+	 * è§£æXMLæ•°æ®åŒ…
+	 *
 	 * @param is
 	 * @return
 	 */
@@ -142,11 +142,11 @@ public class WxService {
 		Map<String, String> map = new HashMap<>();
 		SAXReader reader = new SAXReader();
 		try {
-			// ¶ÁÈ¡ÊäÈëÁ÷£¬»ñÈ¡ÎÄµµ¶ÔÏó
+			// è¯»å–è¾“å…¥æµï¼Œè·å–æ–‡æ¡£å¯¹è±¡
 			Document document = reader.read(is);
-			// ¸ù¾İÎÄµµ¶ÔÏó»ñÈ¡¸ù½Úµã£º<xml>
+			// æ ¹æ®æ–‡æ¡£å¯¹è±¡è·å–æ ¹èŠ‚ç‚¹ï¼š<xml>
 			Element root = document.getRootElement();
-			// »ñÈ¡¸ù½ÚµãµÄËùÓĞ×Ó½Úµã
+			// è·å–æ ¹èŠ‚ç‚¹çš„æ‰€æœ‰å­èŠ‚ç‚¹
 			List<Element> elements = root.elements();
 			for (Element element : elements) {
 				map.put(element.getName(), element.getStringValue());
@@ -159,56 +159,56 @@ public class WxService {
 	}
 
 	/**
-	 * ÓÃÓÚ´¦ÀíËùÓĞµÄÊÂ¼şºÍÏûÏ¢µÄ»Ø¸´
-	 * 
+	 * ç”¨äºå¤„ç†æ‰€æœ‰çš„äº‹ä»¶å’Œæ¶ˆæ¯çš„å›å¤
+	 *
 	 * @param requestMap
-	 * @return ·µ»ØµÄÊÇ»Ø¸´¸øÓÃ»§µÄXMLÊı¾İ°ü
+	 * @return è¿”å›çš„æ˜¯å›å¤ç»™ç”¨æˆ·çš„XMLæ•°æ®åŒ…
 	 */
 	public static String getResponse(Map<String, String> requestMap) {
 		BaseMessage msg = null;
-		// Õâ¸örequestMap²»Ò»¶¨ÊÇÎÄ±¾ÏûÏ¢
-System.out.println("get-response->requestMap:"+requestMap);	
-//ÕâÀïµÄrequestMap£ºok
+		// è¿™ä¸ªrequestMapä¸ä¸€å®šæ˜¯æ–‡æœ¬æ¶ˆæ¯
+System.out.println("get-response->requestMap:"+requestMap);
+//è¿™é‡Œçš„requestMapï¼šok
 		String MsgType = requestMap.get("MsgType");
-		
+
 		switch (MsgType) {
 		case "text":
 System.out.println("getResponse->MsgType:"+MsgType);
-			// ÎÄ±¾ÏûÏ¢
+			// æ–‡æœ¬æ¶ˆæ¯
 			msg = dealTextMessage(requestMap);
 			System.out.println("get-msg:" + msg);
 			break;
 		case "image":
-			// ÎÄ±¾ÏûÏ¢
+			// æ–‡æœ¬æ¶ˆæ¯
 
 			break;
 		case "voice":
-			// ÎÄ±¾ÏûÏ¢
+			// æ–‡æœ¬æ¶ˆæ¯
 
 			break;
 		case "video":
-			// ÎÄ±¾ÏûÏ¢
+			// æ–‡æœ¬æ¶ˆæ¯
 
 			break;
 		case "shortvideo":
-			// ÎÄ±¾ÏûÏ¢
+			// æ–‡æœ¬æ¶ˆæ¯
 
 			break;
 		case "location":
-			// ÎÄ±¾ÏûÏ¢
+			// æ–‡æœ¬æ¶ˆæ¯
 
 			break;
 		case "link":
-			// ÎÄ±¾ÏûÏ¢
+			// æ–‡æœ¬æ¶ˆæ¯
 
 			break;
 
 		default:
 			break;
 		}
-		// °ÑjavaÏûÏ¢¶ÔÏó´¦ÀíÎªxmlÊı¾İ°ü
+		// æŠŠjavaæ¶ˆæ¯å¯¹è±¡å¤„ç†ä¸ºxmlæ•°æ®åŒ…
 		if (msg != null) {
-			// ·ÀÖ¹Ã»ÓĞ½øĞĞ´¦Àí£¬¿ÉÄÜÀàĞÍ²»¶Ô
+			// é˜²æ­¢æ²¡æœ‰è¿›è¡Œå¤„ç†ï¼Œå¯èƒ½ç±»å‹ä¸å¯¹
 			return beanToXml(msg);
 		}
 		return null;
@@ -216,15 +216,15 @@ System.out.println("getResponse->MsgType:"+MsgType);
 	}
 
 	/**
-	 * °ÑjavaÏûÏ¢¶ÔÏó´¦ÀíÎªxmlÊı¾İ°ü
-	 * 
+	 * æŠŠjavaæ¶ˆæ¯å¯¹è±¡å¤„ç†ä¸ºxmlæ•°æ®åŒ…
+	 *
 	 * @param msg
 	 * @return
 	 */
 	private static String beanToXml(BaseMessage msg) {
 		XStream stream = new XStream();
-		// Ä¬ÈÏÊÇ²»¿´×¢½âµÄ£¬ĞèÒª¼ÓÕâÒ»¾ä
-		// ÉèÖÃĞèÒª´¦Àí@XStreamAlias("xml")×¢½âµÄÀà
+		// é»˜è®¤æ˜¯ä¸çœ‹æ³¨è§£çš„ï¼Œéœ€è¦åŠ è¿™ä¸€å¥
+		// è®¾ç½®éœ€è¦å¤„ç†@XStreamAlias("xml")æ³¨è§£çš„ç±»
 		stream.processAnnotations(TextMessage.class);
 		stream.processAnnotations(ImageMessage.class);
 		stream.processAnnotations(MusicMessage.class);
@@ -236,27 +236,27 @@ System.out.println("getResponse->MsgType:"+MsgType);
 	}
 
 	/**
-	 * ´¦ÀíÎÄ±¾ÏûÏ¢
-	 * 
+	 * å¤„ç†æ–‡æœ¬æ¶ˆæ¯
+	 *
 	 * @param requestMap
 	 * @return
 	 */
 	private static BaseMessage dealTextMessage(Map<String, String> requestMap) {
-	
+
 System.out.println("dealTextMessage->requestMap:" + requestMap);
-		// ÓÃ»§·¢À´µÄÄÚÈİ
+		// ç”¨æˆ·å‘æ¥çš„å†…å®¹
 		String msg = requestMap.get("Content");
 System.out.println("dealTextMessage->msg:" + msg);
-		if ("Í¼ÎÄ".equals(msg)) {
+		if ("å›¾æ–‡".equals(msg)) {
 			List<Article> articles = new ArrayList<Article>();
-			articles.add(new Article("ÕâÊÇÍ¼ÎÄÏûÏ¢µÄ±êÌâ", "ÕâÊÇÍ¼ÎÄÏûÏ¢µÄÏêÏ¸½éÉÜ",
+			articles.add(new Article("è¿™æ˜¯å›¾æ–‡æ¶ˆæ¯çš„æ ‡é¢˜", "è¿™æ˜¯å›¾æ–‡æ¶ˆæ¯çš„è¯¦ç»†ä»‹ç»",
 					"https://code.juhe.cn/Public/V2/images/freecode.png?v=1.1", "www.baidu.com"));
 			NewsMessage nm = new NewsMessage(requestMap, articles);
 System.out.println("11111");
 			return nm;
 		}
 
-		// µ÷ÓÃ·½·¨·µ»ØÁÄÌìÄÚÈİ
+		// è°ƒç”¨æ–¹æ³•è¿”å›èŠå¤©å†…å®¹
 		String resp = chat(msg);
 
 		TextMessage tm = new TextMessage(requestMap, resp);
@@ -264,36 +264,36 @@ System.out.println("11111");
 	}
 
 	/**
-	 * µ÷ÓÃÍ¼Áé»úÆ÷ÈËÁÄÌì
-	 * 
+	 * è°ƒç”¨å›¾çµæœºå™¨äººèŠå¤©
+	 *
 	 * @param msg
-	 *            ÓÃ»§·¢ËÍµÄÏûÏ¢
+	 *            ç”¨æˆ·å‘é€çš„æ¶ˆæ¯
 	 * @return
 	 */
 	private static String chat(String msg) {
-		// 1.ÎÊ´ğ
+		// 1.é—®ç­”
 		String result = null;
-		String url = "http://op.juhe.cn/robot/index";// ÇëÇó½Ó¿ÚµØÖ·
-		Map params = new HashMap();// ÇëÇó²ÎÊı
-		params.put("key", APPKEY);// ÄúÉêÇëµ½µÄ±¾½Ó¿Ú×¨ÓÃµÄAPPKEY
-		params.put("info", msg);// Òª·¢ËÍ¸ø»úÆ÷ÈËµÄÄÚÈİ£¬²»Òª³¬¹ı30¸ö×Ö·û
-		params.put("dtype", "");// ·µ»ØµÄÊı¾İµÄ¸ñÊ½£¬json»òxml£¬Ä¬ÈÏÎªjson
-		params.put("loc", "");// µØµã£¬Èç±±¾©ÖĞ¹Ø´å
-		params.put("lon", "");// ¾­¶È£¬¶«¾­116.234632£¨Ğ¡Êıµãºó±£Áô6Î»£©£¬ĞèÒªĞ´Îª116234632
-		params.put("lat", "");// Î³¶È£¬±±Î³40.234632£¨Ğ¡Êıµãºó±£Áô6Î»£©£¬ĞèÒªĞ´Îª40234632
-		params.put("userid", "");// 1~32Î»£¬´ËuseridÕë¶ÔÄú×Ô¼ºµÄÃ¿Ò»¸öÓÃ»§£¬ÓÃÓÚÉÏÏÂÎÄµÄ¹ØÁª
+		String url = "http://op.juhe.cn/robot/index";// è¯·æ±‚æ¥å£åœ°å€
+		Map params = new HashMap();// è¯·æ±‚å‚æ•°
+		params.put("key", APPKEY);// æ‚¨ç”³è¯·åˆ°çš„æœ¬æ¥å£ä¸“ç”¨çš„APPKEY
+		params.put("info", msg);// è¦å‘é€ç»™æœºå™¨äººçš„å†…å®¹ï¼Œä¸è¦è¶…è¿‡30ä¸ªå­—ç¬¦
+		params.put("dtype", "");// è¿”å›çš„æ•°æ®çš„æ ¼å¼ï¼Œjsonæˆ–xmlï¼Œé»˜è®¤ä¸ºjson
+		params.put("loc", "");// åœ°ç‚¹ï¼Œå¦‚åŒ—äº¬ä¸­å…³æ‘
+		params.put("lon", "");// ç»åº¦ï¼Œä¸œç»116.234632ï¼ˆå°æ•°ç‚¹åä¿ç•™6ä½ï¼‰ï¼Œéœ€è¦å†™ä¸º116234632
+		params.put("lat", "");// çº¬åº¦ï¼ŒåŒ—çº¬40.234632ï¼ˆå°æ•°ç‚¹åä¿ç•™6ä½ï¼‰ï¼Œéœ€è¦å†™ä¸º40234632
+		params.put("userid", "");// 1~32ä½ï¼Œæ­¤useridé’ˆå¯¹æ‚¨è‡ªå·±çš„æ¯ä¸€ä¸ªç”¨æˆ·ï¼Œç”¨äºä¸Šä¸‹æ–‡çš„å…³è”
 
 		try {
 			result = Util.net(url, params, "GET");
 			System.out.println(result);
-			// ½âÎöjson
+			// è§£æjson
 			JSONObject json0bject = JSONObject.fromObject(result);
-			// È¡³öerror_code
+			// å–å‡ºerror_code
 			int code = json0bject.getInt("error_code");
 			if (code != 0) {
 				return null;
 			}
-			// È¡³ö·µ»ØµÄÏûÏ¢µÄÄÚÈİ
+			// å–å‡ºè¿”å›çš„æ¶ˆæ¯çš„å†…å®¹
 			String resp = json0bject.getJSONObject("result").getString("text");
 			return resp;
 		} catch (Exception e) {

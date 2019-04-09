@@ -24,33 +24,33 @@ import net.sf.json.JSONObject;
 import service.WxService;
 
 public class TestWx {
-	
+
 	/**
-	 * °Ñ¶ÔÏó×ª»»ÎªÒ»¸öjson×Ö·û´®
+	 * æŠŠå¯¹è±¡è½¬æ¢ä¸ºä¸€ä¸ªjsonå­—ç¬¦ä¸²
 	 */
 	@Test
 	public void testButton(){
-		// ²Ëµ¥¶ÔÏó
+		// èœå•å¯¹è±¡
 		Button btn =new Button();
-		//Ìí¼ÓµÚÒ»¸öÒ»¼¶²Ëµ¥
-		btn.getButton().add(new ClickButton("Ò»¼¶µã»÷", "1"));
-		//Ìí¼ÓµÚ¶ş¸öÒ»¼¶²Ëµ¥
-		btn.getButton().add(new ViewButton("Ò»¼¶Ìø×ª", "http://www.baidu.com"));
-		//´´½¨µÚÈı¸öÒ»¼¶²Ëµ¥
-		SubButton sb=new SubButton("ÓĞ×Ó²Ëµ¥");
-		//ÎªµÚÈı¸öÒ»¼¶²Ëµ¥Ôö¼Ó×Ó²Ëµ¥
-		sb.getSubButton().add(new PhotoOrAlbumBuntton("´«Í¼", "31"));
-		sb.getSubButton().add(new ClickButton("µã»÷", "32"));
-		sb.getSubButton().add(new ViewButton("ÍøÒ×ĞÂÎÅ", "news.163.com"));
-		//½«µÚÈı¸öÒ»¼¶²Ëµ¥¼ÓÈë
+		//æ·»åŠ ç¬¬ä¸€ä¸ªä¸€çº§èœå•
+		btn.getButton().add(new ClickButton("ä¸€çº§ç‚¹å‡»", "1"));
+		//æ·»åŠ ç¬¬äºŒä¸ªä¸€çº§èœå•
+		btn.getButton().add(new ViewButton("ä¸€çº§è·³è½¬", "http://www.baidu.com"));
+		//åˆ›å»ºç¬¬ä¸‰ä¸ªä¸€çº§èœå•
+		SubButton sb=new SubButton("æœ‰å­èœå•");
+		//ä¸ºç¬¬ä¸‰ä¸ªä¸€çº§èœå•å¢åŠ å­èœå•
+		sb.getSub_button().add(new PhotoOrAlbumBuntton("ä¼ å›¾", "31"));
+		sb.getSub_button().add(new ClickButton("ç‚¹å‡»", "32"));
+		sb.getSub_button().add(new ViewButton("ç½‘æ˜“æ–°é—»", "news.163.com"));
+		//å°†ç¬¬ä¸‰ä¸ªä¸€çº§èœå•åŠ å…¥
 		btn.getButton().add(sb);
-		//×ªÎªjson
+		//è½¬ä¸ºjson
 		JSONObject jsonObject = JSONObject.fromObject(btn);
 		System.out.println(jsonObject.toString());
-		
+
 	}
-	
-	
+
+
 	@Test
 	public void testAccessToken(){
 		System.out.println(WxService.getAccessToken());
@@ -58,13 +58,13 @@ public class TestWx {
 		System.out.println(WxService.getAccessToken());
 		System.out.println(WxService.getAccessToken());
 		System.out.println(WxService.getAccessToken());
-		
+
 	}
-	
-	
-	
+
+
+
 	/**
-	 * Õâ¸ötestÓÃÓÚ²âÊÔÊÇ·ñÄÜÍ¨¹ı¹¹Ôì·½·¨¹¹Ôì
+	 * è¿™ä¸ªtestç”¨äºæµ‹è¯•æ˜¯å¦èƒ½é€šè¿‡æ„é€ æ–¹æ³•æ„é€ 
 	 */
 	@Test
 	public void testMsg(){
@@ -72,11 +72,11 @@ public class TestWx {
 		map.put("ToUserName", "to");
 		map.put("FromUserName", "from");
 		map.put("MsgType", "type");
-		TextMessage tm=new TextMessage(map, "»¹ºÃ");
-		
+		TextMessage tm=new TextMessage(map, "è¿˜å¥½");
+
 		XStream stream =new XStream();
-		//Ä¬ÈÏÊÇ²»¿´×¢½âµÄ£¬ĞèÒª¼ÓÕâÒ»¾ä
-		//ÉèÖÃĞèÒª´¦Àí@XStreamAlias("xml")×¢½âµÄÀà
+		//é»˜è®¤æ˜¯ä¸çœ‹æ³¨è§£çš„ï¼Œéœ€è¦åŠ è¿™ä¸€å¥
+		//è®¾ç½®éœ€è¦å¤„ç†@XStreamAlias("xml")æ³¨è§£çš„ç±»
 		stream.processAnnotations(TextMessage.class);
 		stream.processAnnotations(ImageMessage.class);
 		stream.processAnnotations(MusicMessage.class);

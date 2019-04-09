@@ -5,8 +5,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -19,18 +21,52 @@ public class Util {
 	public static final int DEF_READ_TIMEOUT = 30000;
 	public static String userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36";
 
-	
-	// ÅäÖÃÄúÉêÇëµÄKEY
+
+	// é…ç½®æ‚¨ç”³è¯·çš„KEY
 	public static final String APPKEY = "*************************";
 
 	/**
-	 * ¸øÒ»¸öµØÖ·£¬¾ÍÏòÕâ¸öµØÖ··¢Ò»¸ögetÇëÇó
-	 * ÓÃÓÚÇëÇó»ñÈ¡access_tokenÊ±£º·µ»ØµÄÊÇÒ»¸ö×Ö·û´®£¬°üº¬access_tokenºÍ¹ıÆÚÊ±¼ä
+	 * ç»™æŒ‡å®šåœ°å€å‘ä¸€ä¸ªpostè¯·æ±‚ï¼Œå¹¶å¸¦ç€æŒ‡å®šæ•°æ®
+	 * @param url
+	 * @param data
+	 * @return
+	 */
+	public static String post(String url,String data) {
+		try {
+			URL urlObj=new URL(url);
+			URLConnection connection = urlObj.openConnection();
+			//å‘é€æ•°æ®å‰ï¼Œè®¾ç½®ä¸ºå¯å‘é€æ•°æ®çŠ¶æ€
+			connection.setDoOutput(true);
+			//è·å–è¾“å‡ºæµ
+			OutputStream os = connection.getOutputStream();
+			//å†™å‡ºæ•°æ®
+			os.write(data.getBytes());
+			os.close();
+			//è·å–è¾“å…¥æµ
+			InputStream is=connection.getInputStream();
+			byte[]b=new byte[1024];
+			int len;
+			StringBuilder sb=new StringBuilder();
+			while((len=is.read(b))!=-1){
+				sb.append(new String(b,0,len));
+			}
+			return sb.toString();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+
+	/**
+	 * ç»™ä¸€ä¸ªåœ°å€ï¼Œå°±å‘è¿™ä¸ªåœ°å€å‘ä¸€ä¸ªgetè¯·æ±‚
+	 * ç”¨äºè¯·æ±‚è·å–access_tokenæ—¶ï¼šè¿”å›çš„æ˜¯ä¸€ä¸ªå­—ç¬¦ä¸²ï¼ŒåŒ…å«access_tokenå’Œè¿‡æœŸæ—¶é—´
 	 */
 	public static String get(String url){
 		try {
 			URL urlObj=new URL(url);
-			// ¿ªÁ¬½Ó
+			// å¼€è¿æ¥
 			URLConnection connection=urlObj.openConnection();
 			InputStream is=connection.getInputStream();
 			byte[]b=new byte[1024];
@@ -44,20 +80,20 @@ public class Util {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return url;
-		
+
 	}
-	
+
 	/**
 	 *
 	 * @param strUrl
-	 *            ÇëÇóµØÖ·
+	 *            è¯·æ±‚åœ°å€
 	 * @param params
-	 *            ÇëÇó²ÎÊı
+	 *            è¯·æ±‚å‚æ•°
 	 * @param method
-	 *            ÇëÇó·½·¨
-	 * @return ÍøÂçÇëÇó×Ö·û´®
+	 *            è¯·æ±‚æ–¹æ³•
+	 * @return ç½‘ç»œè¯·æ±‚å­—ç¬¦ä¸²
 	 * @throws Exception
 	 */
 	public static String net(String strUrl, Map params, String method) throws Exception {
@@ -111,7 +147,7 @@ public class Util {
 		return rs;
 	}
 
-	// ½«mapĞÍ×ªÎªÇëÇó²ÎÊıĞÍ
+	// å°†mapå‹è½¬ä¸ºè¯·æ±‚å‚æ•°å‹
 	public static String urlencode(Map<String, Object> data) {
 		StringBuilder sb = new StringBuilder();
 		for (Map.Entry i : data.entrySet()) {
@@ -123,4 +159,6 @@ public class Util {
 		}
 		return sb.toString();
 	}
+
+
 }
