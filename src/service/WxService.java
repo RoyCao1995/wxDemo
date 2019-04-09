@@ -1,5 +1,7 @@
 package service;
 
+import static org.hamcrest.CoreMatchers.nullValue;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import org.dom4j.io.SAXReader;
 
 import com.thoughtworks.xstream.XStream;
 
+import entity.AccessToken;
 import entity.Article;
 import entity.BaseMessage;
 import entity.ImageMessage;
@@ -32,7 +35,38 @@ public class WxService {
 	// 与接口配置信息中的Token要一致,自己配置
 	private static String token = "photoshop_xatu";
 	private static String APPKEY = "1fec136dbd19f44743803f89bd55ca62";
-
+	
+	// access_token：url
+	private static final String GET_TOKEN_URL="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
+	private static final String APPID="wx5ee32410401e3e90";
+	private static final String APPSECRET="38cbe17852a2e3b7531692dbec29f51a";//这些应该写在配置文件里面
+	// 用于存储access_token
+	private static AccessToken at;
+	
+	/**
+	 * 获取一个access_token，不对外界提供返回值
+	 */
+	private static void getToken(){
+		//生成微信服务器获取access_token的微信接口
+		String url=GET_TOKEN_URL.replace("APPID", APPID).replace("APPSECRET", APPSECRET);
+		String tokenStr = Util.get(url);//这里获取的access_token是一个json字符串，包含着有效期2小时
+		//将json封装成一个对象
+		JSONObject jsonObject = JSONObject.fromObject(tokenStr);
+		String accessToken = jsonObject.getString("access_token");
+		String expireIn = jsonObject.getString("expires_in");
+		// 创建access_token对象，并存起来
+		at=new AccessToken(accessToken, expireIn);
+	}
+	
+	
+	public static String getAccessToken() {
+		//保证一定有一个token
+		if (at==null||at.isExpire()) {
+			getToken();
+		}
+		return at.getAccessToken();
+	}
+	
 	/**
 	 * 验证签名
 	 * 

@@ -7,15 +7,62 @@ import org.junit.Test;
 
 import com.thoughtworks.xstream.XStream;
 
+import entity.AbstractButtonWX;
 import entity.BaseMessage;
+import entity.Button;
+import entity.ClickButton;
 import entity.ImageMessage;
 import entity.MusicMessage;
 import entity.NewsMessage;
+import entity.PhotoOrAlbumBuntton;
+import entity.SubButton;
 import entity.TextMessage;
 import entity.VideoMessage;
+import entity.ViewButton;
 import entity.VoiceMessage;
+import net.sf.json.JSONObject;
+import service.WxService;
 
 public class TestWx {
+	
+	/**
+	 * 把对象转换为一个json字符串
+	 */
+	@Test
+	public void testButton(){
+		// 菜单对象
+		Button btn =new Button();
+		//添加第一个一级菜单
+		btn.getButton().add(new ClickButton("一级点击", "1"));
+		//添加第二个一级菜单
+		btn.getButton().add(new ViewButton("一级跳转", "http://www.baidu.com"));
+		//创建第三个一级菜单
+		SubButton sb=new SubButton("有子菜单");
+		//为第三个一级菜单增加子菜单
+		sb.getSubButton().add(new PhotoOrAlbumBuntton("传图", "31"));
+		sb.getSubButton().add(new ClickButton("点击", "32"));
+		sb.getSubButton().add(new ViewButton("网易新闻", "news.163.com"));
+		//将第三个一级菜单加入
+		btn.getButton().add(sb);
+		//转为json
+		JSONObject jsonObject = JSONObject.fromObject(btn);
+		System.out.println(jsonObject.toString());
+		
+	}
+	
+	
+	@Test
+	public void testAccessToken(){
+		System.out.println(WxService.getAccessToken());
+		System.out.println(WxService.getAccessToken());
+		System.out.println(WxService.getAccessToken());
+		System.out.println(WxService.getAccessToken());
+		System.out.println(WxService.getAccessToken());
+		
+	}
+	
+	
+	
 	/**
 	 * 这个test用于测试是否能通过构造方法构造
 	 */

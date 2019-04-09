@@ -8,8 +8,10 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Map;
+
 
 public class Util {
 	public static final String DEF_CHATSET = "UTF-8";
@@ -17,9 +19,36 @@ public class Util {
 	public static final int DEF_READ_TIMEOUT = 30000;
 	public static String userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36";
 
+	
 	// 配置您申请的KEY
 	public static final String APPKEY = "*************************";
 
+	/**
+	 * 给一个地址，就向这个地址发一个get请求
+	 * 用于请求获取access_token时：返回的是一个字符串，包含access_token和过期时间
+	 */
+	public static String get(String url){
+		try {
+			URL urlObj=new URL(url);
+			// 开连接
+			URLConnection connection=urlObj.openConnection();
+			InputStream is=connection.getInputStream();
+			byte[]b=new byte[1024];
+			int len;
+			StringBuilder sb=new StringBuilder();
+			while((len=is.read(b))!=-1){
+				sb.append(new String(b,0,len));
+			}
+			return sb.toString();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return url;
+		
+	}
+	
 	/**
 	 *
 	 * @param strUrl
