@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import com.baidu.aip.ocr.AipOcr;
 import com.thoughtworks.xstream.XStream;
 
 import entity.AccessToken;
@@ -28,18 +30,24 @@ import entity.NewsMessage;
 import entity.TextMessage;
 import entity.VideoMessage;
 import entity.VoiceMessage;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import util.Util;
 
 public class WxService {
-	// 与接口配置信息中的Token要一致,自己配置
+	// 聚合数据-聊天机器人：与接口配置信息中的Token要一致,自己配置
 	private static String token = "photoshop_xatu";
 	private static String APPKEY = "1fec136dbd19f44743803f89bd55ca62";
 
-	// access_token：url
+	// 微信公众号 access_token：url
 	private static final String GET_TOKEN_URL="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
 	private static final String APPID="wx5ee32410401e3e90";
 	private static final String APPSECRET="38cbe17852a2e3b7531692dbec29f51a";//这些应该写在配置文件里面
+	//百度AI
+    public static final String APP_ID = "15975666";
+    public static final String API_KEY = "PWhOtG6IFLMGPFa1GRLjf9pH";
+    public static final String SECRET_KEY = "QOwot9jeYERWGXNdQblTVs6U2xiaUeGd";
+    
 	// 用于存储access_token
 	private static AccessToken at;
 
@@ -179,11 +187,11 @@ System.out.println("getResponse->MsgType:"+MsgType);
 			System.out.println("get-msg:" + msg);
 			break;
 		case "image":
-			// 文本消息
-
+			// 图片消息
+			msg=dealImage(requestMap);
 			break;
 		case "voice":
-			// 文本消息
+			// 语音消息
 
 			break;
 		case "video":
@@ -218,6 +226,40 @@ System.out.println("getResponse->MsgType:"+MsgType);
 
 	}
 	
+	
+	/**
+	 * 进行图片识别
+	 * @param requestMap
+	 * @return
+	 */
+	private static BaseMessage dealImage(Map<String, String> requestMap) {
+		// 初始化一个AipOcr
+        AipOcr client = new AipOcr(APP_ID, API_KEY, SECRET_KEY);
+
+        // 可选：设置网络连接参数
+        client.setConnectionTimeoutInMillis(2000);
+        client.setSocketTimeoutInMillis(60000);
+        // 调用接口
+        String path = requestMap.get("PicUrl");
+//        org.json.JSONObject res = client.basicGeneral(path, new HashMap<String, String>());
+        
+        //设置进行网络图片的识别
+        org.json.JSONObject res = client.generalUrl(path, new HashMap<String, String>());
+        
+        String json = res.toString();
+        //将识别出来的结果转为json object
+        JSONObject jsonObject = JSONObject.fromObject(json);
+        JSONArray jsonArray = jsonObject.getJSONArray("words_result");
+        Iterator<JSONObject> it = jsonArray.iterator();
+        StringBuilder sb=new StringBuilder();
+        while (it.hasNext()) {
+        	JSONObject next = it.next();
+        	sb.append(next.getString("words"));
+		}
+		return new TextMessage(requestMap, sb.toString());
+	}
+
+
 	/**
 	 * 专门用来处理事件推送的
 	 * 注：自定义菜单事件只是事件之一
