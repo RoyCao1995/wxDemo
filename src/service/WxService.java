@@ -2,6 +2,14 @@ package service;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -398,5 +406,72 @@ System.out.println("11111");
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	/**
+	 * 上传临时素材
+	 * @param path：上传文件的路径
+	 * @param type：上传文件的类型
+	 * @return
+	 */
+	public static String upload(String path,String type) {
+		File file=new File(path);
+		//地址
+		String url="https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE";
+		url.replace("ACCESS_TOKEN", getAccessToken()).replace("TYPE", type);
+		try {
+			URL urlObj=new URL(url);
+			//强转为安全链接：https
+			HttpURLConnection connection = (HttpURLConnection) urlObj.openConnection();
+			//设置连接的信息
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			connection.setUseCaches(false);
+			//设置请求头信息
+			connection.setRequestProperty("Connection", "Keep-Alive");
+			connection.setRequestProperty("Charset", "utf8");
+			//数据边界
+			String boundary="-----"+System.currentTimeMillis();
+			connection.setRequestProperty("Content-Type", "multipart/form-data;boundary="+boundary);
+			//获取输出流
+			OutputStream os = connection.getOutputStream();
+			//创建文件的输入流
+			InputStream is=new FileInputStream(file);
+			//第一部分：头部信息
+			//	准备头部信息
+			StringBuilder sb=new StringBuilder();
+			sb.append("--");
+			sb.append(boundary);
+			sb.append("\r\n");
+			sb.append("Content-Disposition:form-data;name=media;filename="+file.getName());
+			sb.append("Content-Type:application/octet-stream\r\n\r\n");
+			os.write(sb.toString().getBytes());
+			os.flush();
+			os.close();
+			//第二部分：文件内容
+			byte[] b=new byte[1024];
+			int len;
+			while ((len=is.read(b))!=-1) {
+				os.write(b, 0, len);
+			}
+			//第三部分：尾部信息
+			String foot="\r\n--"+boundary+"--\r\n";
+			os.write(foot.getBytes());
+			os.flush();
+			os.close();
+			//读取数据
+			InputStream is2=connection.getInputStream();
+			StringBuilder resp=new StringBuilder();
+			while ((len=is2.read(b))!=-1) {
+				resp.append(new String(b, 0, len));
+			}
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return type;
 	}
 }
