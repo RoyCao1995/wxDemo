@@ -6,6 +6,7 @@ import java.sql.Time;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +26,7 @@ public class WxServlet extends HttpServlet {
 		String timestamp = request.getParameter("timestamp");
 		String nonce = request.getParameter("nonce");
 		String echostr = request.getParameter("echostr");
+		
 		// 验证签名
 		if (WxService.check(signature, timestamp, nonce)) {
 			PrintWriter out = response.getWriter();
@@ -48,11 +50,11 @@ public class WxServlet extends HttpServlet {
 		response.setCharacterEncoding("utf8");
 		//处理消息和事件推送
 		Map<String, String> requestMap=WxService.parseRequest(request.getInputStream());
-System.out.println("dopost-requestMap->parseReq:"+requestMap);
+//System.out.println("dopost-requestMap->parseReq:"+requestMap);
 //**parse方法没问题
 		//准备回复的数据包
 		String respXml=WxService.getResponse(requestMap);
-System.out.println("dopost-respXml"+respXml);
+//System.out.println("dopost-respXml"+respXml);
 		PrintWriter out = response.getWriter();
 		out.print(respXml);
 		out.flush();

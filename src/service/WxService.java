@@ -19,7 +19,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.ServletInputStream;
+import javax.servlet.annotation.WebServlet;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -42,6 +44,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import util.Util;
 
+
 public class WxService {
 	// 聚合数据-聊天机器人：与接口配置信息中的Token要一致,自己配置
 	private static String token = "photoshop_xatu";
@@ -59,6 +62,7 @@ public class WxService {
 	// 用于存储access_token
 	private static AccessToken at;
 
+	public static int atNum=0;
 	/**
 	 * 获取一个access_token，不对外界提供返回值
 	 */
@@ -76,10 +80,24 @@ public class WxService {
 
 
 	public static String getAccessToken() {
+		atNum++;
+		
 		//保证一定有一个token
-		if (at==null||at.isExpire()) {
-			getToken();
+		if (at==null) {
+			System.out.println("at==null");
+		}else if (at.isExpired()) {
+			System.out.println("at.isExpired()");
+		}else {
+System.out.println("direct-print:"+at.getAccessToken());
 		}
+System.out.println(atNum);
+
+		if (at==null||at.isExpired()) {
+			getToken();
+System.out.println("getAT:"+at.getAccessToken());
+System.out.println("又生成新的access_token了");
+		}
+System.out.println("返回了access_token");
 		return at.getAccessToken();
 	}
 
@@ -418,11 +436,16 @@ System.out.println("11111");
 		File file=new File(path);
 		//地址
 		String url="https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE";
-		url.replace("ACCESS_TOKEN", getAccessToken()).replace("TYPE", type);
+//System.out.println("upload-at：1");
+		
+		String up_accessToken=getAccessToken();
+//System.out.println("upload-at：2");
+		url.replace("ACCESS_TOKEN", up_accessToken).replace("TYPE", type);
+//System.out.println("upload:"+WxService.getAccessToken());
 		try {
 			URL urlObj=new URL(url);
 			//强转为安全链接：https
-			HttpURLConnection connection = (HttpURLConnection) urlObj.openConnection();
+			HttpsURLConnection connection = (HttpsURLConnection) urlObj.openConnection();
 			//设置连接的信息
 			connection.setDoInput(true);
 			connection.setDoOutput(true);
@@ -443,17 +466,18 @@ System.out.println("11111");
 			sb.append("--");
 			sb.append(boundary);
 			sb.append("\r\n");
-			sb.append("Content-Disposition:form-data;name=media;filename="+file.getName());
+			sb.append("Content-Disposition:form-data;name=\"media\";filename=\""+file.getName()+"\"\r\n");
 			sb.append("Content-Type:application/octet-stream\r\n\r\n");
 			os.write(sb.toString().getBytes());
-			os.flush();
-			os.close();
+//			os.flush();
+//			os.close();//后面还要用，不关
 			//第二部分：文件内容
 			byte[] b=new byte[1024];
 			int len;
 			while ((len=is.read(b))!=-1) {
 				os.write(b, 0, len);
 			}
+			is.close();
 			//第三部分：尾部信息
 			String foot="\r\n--"+boundary+"--\r\n";
 			os.write(foot.getBytes());
@@ -465,13 +489,28 @@ System.out.println("11111");
 			while ((len=is2.read(b))!=-1) {
 				resp.append(new String(b, 0, len));
 			}
-			
-			
+			return resp.toString();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return type;
+		return null;
 	}
+	
+	
+	/**
+	 * 获取带参数二维码的ticket
+	 * @return
+	 */
+	public static String getQrCodeTicket() {
+		String at = getAccessToken();
+		String url="https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token="+at;
+		//生成临时字符二维码
+		String data="{\"expire_seconds\": 600, \"action_name\": \"QR_STR_SCENE\", \"action_info\": {\"scene\": {\"scene_str\": \"llzs\"}}}";
+		String result = Util.post(url, data);
+		String ticket = JSONObject.fromObject(result).getString("ticket");
+		return ticket;
+		
+	}
+	
 }

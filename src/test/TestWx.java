@@ -28,6 +28,21 @@ public class TestWx {
     public static final String API_KEY = "PWhOtG6IFLMGPFa1GRLjf9pH";
     public static final String SECRET_KEY = "QOwot9jeYERWGXNdQblTVs6U2xiaUeGd";
     
+    @Test
+    public void testQrCode() {
+    	System.out.println(WxService.getQrCodeTicket());
+	}
+    
+    @Test
+    public void testUpload(){
+    	String file="/Users/caoyo/Desktop/2.png";///wxDemo/src/test/2.png
+    	String result = WxService.upload(file, "image");
+//System.out.println("complete:test-up");
+//System.out.println("test-Upload:"+WxService.getAccessToken());
+    	System.out.println(result);
+    }
+    
+    
 	@Test
 	public void testPic() {
 		
